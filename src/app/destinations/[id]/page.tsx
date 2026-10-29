@@ -4,9 +4,9 @@ import { buttonVariants } from "@/components/ui/button";
 import {
   BookingCard,
   DestinationHero,
-} from "@/components/destination-details";
-import EditDestinationDialog from "@/components/EditDestinationDialog";
-import DeleteDestinationDialog from "@/components/DeleteDestinationDialog";
+} from "@/components/destinations/destination-details";
+import EditDestinationDialog from "@/components/destinations/EditDestinationDialog";
+import DeleteDestinationDialog from "@/components/destinations/DeleteDestinationDialog";
 
 // The API is a local dev server, so render at request time instead of
 // baking the data into the build (the API isn't reachable during `next build`).

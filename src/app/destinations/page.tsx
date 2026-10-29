@@ -1,7 +1,7 @@
 import {
   DestinationsExplorer,
   type Destination,
-} from "@/components/destinations-explorer";
+} from "@/components/destinations/destinations-explorer";
 
 // The API is a local dev server, so render at request time instead of
 // baking the data into the build (the API isn't reachable during `next build`).

@@ -1,7 +1,7 @@
-import { Banner } from "@/components/banner";
-import { Cta } from "@/components/cta";
+import { Banner } from "@/components/home/banner";
+import { Cta } from "@/components/home/cta";
 import { Testimonials } from "@/components/testimonials";
-import { WhyChooseUs } from "@/components/why-choose-us";
+import { WhyChooseUs } from "@/components/home/why-choose-us";
 
 export default function Home() {
   return (
