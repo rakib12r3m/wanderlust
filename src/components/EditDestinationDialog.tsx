@@ -1,3 +1,4 @@
+"use client";
 import {
   Dialog,
   DialogContent,
@@ -6,19 +7,217 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
+import { useState } from "react";
+import { Send, Trash2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { IDestination } from "@/lib/types/destination";
+const CATEGORIES = ["Beach", "Mountain", "City", "Adventure", "Cultural"] as const;
 
 
 
-const EditDestinationDialog = () => {
+
+
+
+const EditDestinationDialog = ({destination}:{destination:IDestination}) => {
+  console.log(destination);
+  
+
+  const [form, setForm] = useState<FormState>(destination);
+    const [submitted, setSubmitted] = useState(false);
+   
+    
+
+     const update = (field: keyof FormState, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    setSubmitted(false);
+  };
+
+  const handleSubmit =async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // const travelPackage = {
+    //   ...form,
+    //   price: Number(form.price),
+    // };
+
+    // console.log("New travel package:", travelPackage);
+    setSubmitted(true);
+    const {_id, ...updatedData} = form
+    const res = await fetch(`http://localhost:8000/destination/${destination._id}`,{
+      method: "PATCH",
+      headers: {
+        "Content-Type":"application/json",
+      },
+      body: JSON.stringify(updatedData)
+    });
+
+    const data = await res.json();
+    console.log(data);
+        
+  };
+    const handleCancel = () => {
+    setForm(destination);
+    setSubmitted(false);
+  };
+
+
+
+
   return (
     <Dialog>
-      <DialogTrigger>Open</DialogTrigger>
-      <DialogContent>
+      <DialogTrigger>
+        
+        <Button variant="outline" >
+          <Pencil data-icon="inline-start" />
+          Edit
+        </Button>
+      </DialogTrigger>
+      <DialogContent className={'min-w-2xl max-h-[90vh] overflow-y-auto'}>
         <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
+          <DialogTitle>Edit Destination</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+           <form onSubmit={handleSubmit} className="flex flex-col gap-5 px-6">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="name">Destination Name</Label>
+              <Input
+                id="name"
+                placeholder="Bali Paradise"
+                value={form.name}
+                onChange={(e) => update("name", e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="country">Country</Label>
+                <Input
+                  id="country"
+                  placeholder="Indonesia"
+                  value={form.country}
+                  onChange={(e) => update("country", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="category">Category</Label>
+                <Select
+                  value={form.category}
+                  onValueChange={(value) => {
+                    if (value) update("category", value);
+                  }}
+                >
+                  <SelectTrigger id="category" className="w-full">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="price">Price (USD)</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  min={0}
+                  step="1"
+                  placeholder="e.g., 1299"
+                  value={form.price}
+                  onChange={(e) => update("price", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="duration">Duration</Label>
+                <Input
+                  id="duration"
+                  placeholder="e.g., 7 Days/6 Nights"
+                  value={form.duration}
+                  onChange={(e) => update("duration", e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="departure-date">Departure Date</Label>
+              <Input
+                id="departure-date"
+                type="date"
+                value={form.departureDate}
+                onChange={(e) => update("departureDate", e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="image-url">Image URL</Label>
+              <Input
+                id="image-url"
+                type="url"
+                placeholder="https://example.com/image.jpg"
+                value={form.imageUrl}
+                onChange={(e) => update("imageUrl", e.target.value)}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                placeholder="Describe the travel experience..."
+                className="min-h-32"
+                value={form.description}
+                onChange={(e) => update("description", e.target.value)}
+              />
+            </div>
+
+            <div className="flex flex-col-reverse gap-2 border-t pt-5 sm:flex-row sm:items-center sm:justify-end">
+              {submitted ? (
+                <p className="text-sm text-brand-strong sm:mr-auto">
+                  Travel package added successfully!
+                </p>
+              ) : null}
+              <Button
+                type="button"
+                variant="outline"
+                className="border-destructive/40 bg-background text-destructive hover:bg-destructive/5 hover:text-destructive"
+                onClick={handleCancel}
+              >
+                <Trash2 data-icon="inline-start" />
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="bg-brand text-white hover:bg-brand-strong"
+              >
+                <Send data-icon="inline-start" />
+                Edit Travel Package
+              </Button>
+            </div>
+          </form>
           </DialogDescription>
         </DialogHeader>
       </DialogContent>

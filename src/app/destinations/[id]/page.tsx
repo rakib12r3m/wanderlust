@@ -5,6 +5,8 @@ import {
   BookingCard,
   DestinationHero,
 } from "@/components/destination-details";
+import EditDestinationDialog from "@/components/EditDestinationDialog";
+import DeleteDestinationDialog from "@/components/DeleteDestinationDialog";
 
 // The API is a local dev server, so render at request time instead of
 // baking the data into the build (the API isn't reachable during `next build`).
@@ -123,23 +125,10 @@ const DestinationDetailsPage = async ({ params }: PageProps<"/destinations/[id]"
 
           <div className="flex items-center gap-2">
             {/* TODO: no edit route exists yet. */}
-            <Link
-              href="/add-destination"
-              className={buttonVariants({ variant: "outline" })}
-            >
-              <Pencil data-icon="inline-start" />
-              Edit
-            </Link>
-            <Link
-              href="/destinations"
-              className={buttonVariants({
-                variant: "outline",
-                className:
-                  "border-destructive/40 bg-background text-destructive hover:bg-destructive/5 hover:text-destructive",
-              })}
-            >
-              Cancel
-            </Link>
+           
+            <EditDestinationDialog destination={destination}/>
+            
+            <DeleteDestinationDialog id={id}/>
           </div>
         </div>
 
