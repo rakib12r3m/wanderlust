@@ -2,11 +2,12 @@ import Link from "next/link";
 import { ArrowLeft, CalendarDays, Check, MapPin, Pencil, Star } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import {
-  BookingCard,
+ 
   DestinationHero,
 } from "@/components/destinations/destination-details";
 import EditDestinationDialog from "@/components/destinations/EditDestinationDialog";
 import DeleteDestinationDialog from "@/components/destinations/DeleteDestinationDialog";
+import { BookingCard } from "@/components/booking-card/BookingCard";
 
 // The API is a local dev server, so render at request time instead of
 // baking the data into the build (the API isn't reachable during `next build`).
@@ -192,9 +193,10 @@ const DestinationDetailsPage = async ({ params }: PageProps<"/destinations/[id]"
           </div>
 
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <BookingCard
-              price={destination.price}
-              departureDate={destination.departureDate}
+            <BookingCard 
+            destination={destination}
+              // price={destination.price}
+              // departureDate={destination.departureDate}
             />
           </div>
         </div>
