@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "cn";
+import { redirect } from "next/navigation";
 
 /** Used when the API's imageUrl is missing or not a loadable image. */
 const FALLBACK_IMAGE = "/images/Banner.png";
@@ -46,7 +47,11 @@ const STATUS_META: Record<
   },
 };
 
-function getStatus(status?: string): { label: string; className: string; Icon: typeof CircleCheck } {
+function getStatus(status?: string): {
+  label: string;
+  className: string;
+  Icon: typeof CircleCheck;
+} {
   const key = (status ?? "confirmed").toLowerCase() as BookingStatus;
   return STATUS_META[key] ?? STATUS_META.confirmed;
 }
@@ -57,7 +62,13 @@ function formatDepartureDate(value?: string) {
 
   const dateOnly = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
   const date = dateOnly
-    ? new Date(Date.UTC(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3])))
+    ? new Date(
+        Date.UTC(
+          Number(dateOnly[1]),
+          Number(dateOnly[2]) - 1,
+          Number(dateOnly[3]),
+        ),
+      )
     : new Date(value);
 
   if (Number.isNaN(date.getTime())) return value;
@@ -74,6 +85,16 @@ function BookingCard({ booking }: { booking: Booking }) {
   const [imageSrc, setImageSrc] = useState(booking.imageUrl || FALLBACK_IMAGE);
   const { label, className, Icon } = getStatus(booking.status);
   const name = booking.name ?? "Your booking";
+
+  const handelCancelBooking = async() => {
+      const res = await fetch(`http://localhost:8000/my-bookings/${booking._id}`,{
+        method: "DELETE",
+
+      })
+      const data = await res.json()
+      redirect('/my-bookings');
+      
+  }
 
   return (
     <article className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 sm:flex-row sm:gap-6">
@@ -113,7 +134,8 @@ function BookingCard({ booking }: { booking: Booking }) {
       </div>
 
       <div className="flex items-center gap-3 sm:items-end">
-        <Button
+        <Button 
+        onClick={handelCancelBooking}
           variant="outline"
           className="border-destructive/30 text-destructive hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive"
         >
@@ -145,7 +167,9 @@ export function MyBookingCards({ bookings }: { bookings: Booking[] }) {
         </p>
         <Link
           href="/destinations"
-          className={buttonVariants({ className: "mt-4 bg-brand text-white hover:bg-brand-strong" })}
+          className={buttonVariants({
+            className: "mt-4 bg-brand text-white hover:bg-brand-strong",
+          })}
         >
           Explore Destinations
         </Link>
