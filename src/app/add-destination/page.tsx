@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { authClient } from "@/lib/auth-client";
 
 const CATEGORIES = ["Beach", "Mountain", "City", "Adventure", "Cultural"] as const;
 
@@ -45,23 +46,23 @@ const AddDestinationPage = () => {
   const handleSubmit =async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // const travelPackage = {
-    //   ...form,
-    //   price: Number(form.price),
-    // };
+    const {data, error } = await authClient.token()
+   
+    const token = data?.token
+     
 
-    // console.log("New travel package:", travelPackage);
     setSubmitted(true);
     const res = await fetch('http://localhost:8000/add-destination',{
       method: "POST",
       headers: {
         "Content-Type":"application/json",
+        authorization: `Bearer ${token}`
       },
       body: JSON.stringify(form)
     });
 
-    const data = await res.json();
-    console.log(data);
+    const result = await res.json();
+    console.log(result);
         
   };
 

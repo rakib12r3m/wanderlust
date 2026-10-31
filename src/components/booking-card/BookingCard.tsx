@@ -8,14 +8,14 @@ import { authClient } from "@/lib/auth-client";
 
 
 export function BookingCard({destination}:{destination:IDestination}) {
-  // const [date, setDate] = useState(destination.departureDate);
+  const [date, setDate] = useState(destination.departureDate);
   const [booked, setBooked] = useState(false);
 
 
   const { data: session } = authClient.useSession();
     const user = session?.user; 
 
-    const handleBooking =async (e)=> {
+    const handleBooking =async (e:React.SubmitEvent<HTMLElement>)=> {
         e.preventDefault()
         const departureDate = e.target.departureDate.value 
      

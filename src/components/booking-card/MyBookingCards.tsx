@@ -91,7 +91,7 @@ function BookingCard({ booking }: { booking: Booking }) {
         method: "DELETE",
 
       })
-      const data = await res.json()
+      await res.json()
       redirect('/my-bookings');
       
   }

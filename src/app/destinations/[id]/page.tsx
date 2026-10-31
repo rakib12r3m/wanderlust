@@ -1,13 +1,21 @@
 import Link from "next/link";
-import { ArrowLeft, CalendarDays, Check, MapPin, Pencil, Star } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
 import {
- 
-  DestinationHero,
-} from "@/components/destinations/destination-details";
+  ArrowLeft,
+  CalendarDays,
+  Check,
+  MapPin,
+  Pencil,
+  Star,
+} from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { DestinationHero } from "@/components/destinations/destination-details";
 import EditDestinationDialog from "@/components/destinations/EditDestinationDialog";
 import DeleteDestinationDialog from "@/components/destinations/DeleteDestinationDialog";
 import { BookingCard } from "@/components/booking-card/BookingCard";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+
+
 
 // The API is a local dev server, so render at request time instead of
 // baking the data into the build (the API isn't reachable during `next build`).
@@ -43,8 +51,18 @@ const FALLBACK_HIGHLIGHTS = [
 ];
 
 async function getDestination(id: string): Promise<Destination | null> {
+  const jwtToken = await auth.api.getToken({
+    headers: await headers()
+  })
+  const token = jwtToken?.token
+ console.log(token,'from Jwt token');
+ 
   try {
-    const res = await fetch(`${API_URL}/${id}`);
+    const res = await fetch(`${API_URL}/${id}`,{
+      headers: {
+        authorization: `Bearer ${token}`
+      },
+    } );
 
     if (!res.ok) {
       console.error(`Failed to fetch destination: ${res.status}`);
@@ -71,7 +89,7 @@ function formatDuration(raw: string): string {
         .trim()
         .split(/\s+/)
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ")
+        .join(" "),
     )
     .join(" / ");
 }
@@ -99,8 +117,11 @@ function DestinationNotFound() {
   );
 }
 
-const DestinationDetailsPage = async ({ params }: PageProps<"/destinations/[id]">) => {
+const DestinationDetailsPage = async ({
+  params,
+}: PageProps<"/destinations/[id]">) => {
   const { id } = await params;
+
   const destination = await getDestination(id);
 
   if (!destination) {
@@ -126,19 +147,16 @@ const DestinationDetailsPage = async ({ params }: PageProps<"/destinations/[id]"
 
           <div className="flex items-center gap-2">
             {/* TODO: no edit route exists yet. */}
-           
-            <EditDestinationDialog destination={destination}/>
-            
-            <DeleteDestinationDialog id={id}/>
+
+            <EditDestinationDialog destination={destination} />
+
+            <DeleteDestinationDialog id={id} />
           </div>
         </div>
 
         {/* Hero image */}
         <div className="mt-6">
-          <DestinationHero
-            src={destination.imageUrl}
-            alt={destination.name}
-          />
+          <DestinationHero src={destination.imageUrl} alt={destination.name} />
         </div>
 
         {/* Content + booking card */}
@@ -157,7 +175,9 @@ const DestinationDetailsPage = async ({ params }: PageProps<"/destinations/[id]"
               <span className="flex items-center gap-1.5">
                 <Star className="size-4 fill-green-600 text-green-600" />
                 <span className="font-medium">{rating}</span>
-                <span className="text-muted-foreground">({reviews} reviews)</span>
+                <span className="text-muted-foreground">
+                  ({reviews} reviews)
+                </span>
               </span>
               <span className="flex items-center gap-1.5 text-muted-foreground">
                 <CalendarDays className="size-4" />
@@ -193,8 +213,8 @@ const DestinationDetailsPage = async ({ params }: PageProps<"/destinations/[id]"
           </div>
 
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <BookingCard 
-            destination={destination}
+            <BookingCard
+              destination={destination}
               // price={destination.price}
               // departureDate={destination.departureDate}
             />
