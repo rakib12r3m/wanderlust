@@ -14,6 +14,7 @@ import DeleteDestinationDialog from "@/components/destinations/DeleteDestination
 import { BookingCard } from "@/components/booking-card/BookingCard";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 
 
@@ -21,7 +22,7 @@ import { headers } from "next/headers";
 // baking the data into the build (the API isn't reachable during `next build`).
 export const dynamic = "force-dynamic";
 
-const API_URL = "http://localhost:8000/destination";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/destination`;
 
 /** Shape returned by the local API, plus optional fields it may not send yet. */
 type Destination = {
@@ -51,11 +52,8 @@ const FALLBACK_HIGHLIGHTS = [
 ];
 
 async function getDestination(id: string): Promise<Destination | null> {
-  const jwtToken = await auth.api.getToken({
-    headers: await headers()
-  })
-  const token = jwtToken?.token
- console.log(token,'from Jwt token');
+ const token = await getTokenFromServer()
+ 
  
   try {
     const res = await fetch(`${API_URL}/${id}`,{

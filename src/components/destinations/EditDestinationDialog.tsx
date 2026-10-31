@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { IDestination } from "@/lib/types/destination";
 import { Pencil, Send, X } from "lucide-react";
 import { useState } from "react";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const CATEGORIES = [
   "Beach",
@@ -69,6 +70,7 @@ const EditDestinationDialog = ({
   ) => {
     event.preventDefault();
 
+
     if (!destination._id) {
       setErrorMessage("Destination ID is missing.");
       return;
@@ -78,15 +80,20 @@ const EditDestinationDialog = ({
     setSuccessMessage("");
     setErrorMessage("");
 
+
+    
     try {
+      const token = await getTokenFromClient()
       const { _id, ...updatedData } = form;
 
+
       const res = await fetch(
-        `http://localhost:8000/destination/${destination._id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/destination/${destination._id}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${token}`
           },
           body: JSON.stringify({
             ...updatedData,

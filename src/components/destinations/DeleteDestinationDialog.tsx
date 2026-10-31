@@ -17,7 +17,7 @@ import { redirect } from "next/navigation";
 const DeleteDestinationDialog = ({ id }:{id:string}) => {
   const handleDeleteDestination = async () => {
     const res = await fetch(
-      `http://localhost:8000/destination/${id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/destination/${id}`,
       {
         method: "DELETE",
       },

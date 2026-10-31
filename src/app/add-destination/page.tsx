@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const CATEGORIES = ["Beach", "Mountain", "City", "Adventure", "Cultural"] as const;
 
@@ -46,13 +47,11 @@ const AddDestinationPage = () => {
   const handleSubmit =async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const {data, error } = await authClient.token()
-   
-    const token = data?.token
+  const token = await getTokenFromClient()
      
 
     setSubmitted(true);
-    const res = await fetch('http://localhost:8000/add-destination',{
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/add-destination`,{
       method: "POST",
       headers: {
         "Content-Type":"application/json",

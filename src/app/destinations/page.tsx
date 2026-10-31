@@ -7,7 +7,7 @@ import {
 // baking the data into the build (the API isn't reachable during `next build`).
 export const dynamic = "force-dynamic";
 
-const API_URL = "http://localhost:8000/destination";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/destination`;
 
 async function getDestinations(): Promise<Destination[]> {
   try {

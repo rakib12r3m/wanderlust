@@ -77,13 +77,15 @@ export function Navbar() {
             <Popover>
               <PopoverTrigger
                 render={
-                  <Avatar>
+                 <button type="button" className="rounded-full">
+                   <Avatar>
                     <AvatarImage
                       referrerPolicy="no-referrer"
                       src={user?.image as string}
                     />
                     <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
                   </Avatar>
+                 </button>
                 }
               ></PopoverTrigger>
               <PopoverContent>

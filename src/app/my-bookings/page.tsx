@@ -5,7 +5,7 @@ import {
   type Booking,
 } from "@/components/booking-card/MyBookingCards";
 
-const API_URL = "http://localhost:8000/my-bookings";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/my-bookings`;
 
 async function getBookings(email?: string | null): Promise<Booking[]> {
   if (!email) return [];

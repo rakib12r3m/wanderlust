@@ -87,7 +87,7 @@ function BookingCard({ booking }: { booking: Booking }) {
   const name = booking.name ?? "Your booking";
 
   const handelCancelBooking = async() => {
-      const res = await fetch(`http://localhost:8000/my-bookings/${booking._id}`,{
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-bookings/${booking._id}`,{
         method: "DELETE",
 
       })
